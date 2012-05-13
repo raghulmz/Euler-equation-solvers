@@ -57,11 +57,11 @@ int main()
 //   cin>>y_cell;
 //   cout<<"Give number of cells along z-directions   ......?";
 //   cin>>z_cell;
-  x_cell=10;
-  y_cell=3;
-  z_cell=10;
-  
+//   x_cell=10;
+//   y_cell=3;
+//   z_cell=10;
   Read_grid_size();
+//   Read_grid_size_single();
   x_cell+=2;    y_cell+=2;    z_cell+=2;
   
   
@@ -72,15 +72,13 @@ int main()
 //   printf("%i\n",xy_cell);
 //   printf("%i\n",xyz_cell);
   
-  Allocate_Memory();
-  Read_grid_double_output ();
-  
+  Allocate_Memory();  
   
 //   Calculate_Nodes();
 //   Calculate_Nodes_Compression_Ramp();
 //   Calculate_Nodes_Compression_Expansion_Ramp();
 //   Calculate_Nodes_Convergent_Duct();
-  Calculate_Nodes_Convergent_Divergent_Duct();
+  Calculate_Nodes_Circular_Arc();
 //   Calculate_Nodes_Compression_Ramp_exponential_y();
   Calculate_cellcenter();
   Calculate_facenormal();
@@ -91,7 +89,7 @@ int main()
 //   Iteration=3;
   int k;
 //   Initial_Condition();
-  
+  Read_grid_double_output ();
   
   for (k=0;k<=Iteration;k++)
   {
@@ -100,26 +98,27 @@ int main()
    if((k%1000)==0)
    {
       Write_Timestep();
-      Write_grid_double_output ();
+      
 //    Write_First_row ();
    }
    
-//     Boundary_Conditions_wall ();
-    Boundary_Conditions_subsonic_wall ();
+    Boundary_Conditions_wall ();
+//     Boundary_Conditions_subsonic_wall ();
     Calculate_Mach ();
     Calculate_Timestep ();
     Calculate_dt_min ();
     Calculate_Q ();
     Calculate_Fluxvectors ();
 //     Calculate_Q_new ();
-    Calculate_Q_new_lax ();
+    Calculate_Q_new_avg ();
     Calculate_Primitive ();
     Calculate_Change ();
 //     Calculate_error ();
 //     Calculate_error_compression ();
     Extra_Iterations ();
   }
-  
+  Write_grid_double_output ();
+
   
 //   Write_Timestep();
   return 0;

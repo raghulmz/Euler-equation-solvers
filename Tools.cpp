@@ -62,7 +62,7 @@ void Extra_Iterations ()
 {
   if (Iter==Iteration-1)
    {
-    cout<<"\nDo you want to continue yes =1, no =2 ...  ?";
+    cout<<"\nDo you want to continue yes =1, no =2 ...?";
     cin>>choice;
     if (choice==1)
     {

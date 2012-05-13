@@ -67,9 +67,11 @@ string int2string(const int& number);
 void Write_Timestep();
 void Print_Error ();
 void Write_First_row ();
+void Write_grid_single_output ();
 void Write_grid_double_output ();
-void Read_grid_double_output ();
 void Read_grid_size();
+void Read_grid_size_single();
+void Read_grid_double_output ();
 /***********************************************************************************/
 
 
@@ -78,6 +80,7 @@ void Calculate_Nodes();
 void Calculate_Nodes_Compression_Ramp();
 void Calculate_Nodes_Compression_Expansion_Ramp();
 void Calculate_Nodes_Convergent_Duct();
+void Calculate_Nodes_Circular_Arc();
 void Calculate_Nodes_Convergent_Divergent_Duct();
 void Calculate_Nodes_Compression_Ramp_exponential_y();
 void Calculate_cellcenter();
@@ -94,7 +97,7 @@ void Calculate_Mach ();
 void Calculate_Timestep ();
 void Calculate_dt_min ();
 void Calculate_Q_new ();
-void Calculate_Q_new_lax ();
+void Calculate_Q_new_avg ();
 void Calculate_Change ();
 void Calculate_error ();
 void Calculate_error_compression ();

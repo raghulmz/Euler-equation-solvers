@@ -48,7 +48,7 @@ int main()
   
   ReadFolder.append("./Data/");
   WriteFolder.append("./Data/");
-  FILE *final = fopen( "./Data/change.dat","w" ),*dataf = fopen( "./Data/grid_double.dat","r" );
+  FILE *final = fopen( "./Data/change.dat","w" );
   fclose(final);
   
 //   cout<<"Give number of cells along x-directions   ......?";
@@ -57,10 +57,9 @@ int main()
 //   cin>>y_cell;
 //   cout<<"Give number of cells along z-directions   ......?";
 //   cin>>z_cell;
-  x_cell=30;
+  x_cell=60;
   y_cell=3;
-  z_cell=30;
-  
+  z_cell=60;
 //   Read_grid_size();
   x_cell+=2;    y_cell+=2;    z_cell+=2;
   
@@ -72,16 +71,14 @@ int main()
 //   printf("%i\n",xy_cell);
 //   printf("%i\n",xyz_cell);
   
-  Allocate_Memory();
-  
-//   Read_grid_double_output ();
-  
+  Allocate_Memory();  
   
 //   Calculate_Nodes();
 //   Calculate_Nodes_Compression_Ramp();
 //   Calculate_Nodes_Compression_Expansion_Ramp();
-  Calculate_Nodes_Convergent_Duct();
-//   Calculate_Nodes_Convergent_Divergent_Duct();
+//   Calculate_Nodes_Convergent_Duct();
+//   Calculate_Nodes_Circular_Arc();
+  Calculate_Nodes_Convergent_Divergent_Duct();
 //   Calculate_Nodes_Compression_Ramp_exponential_y();
   Calculate_cellcenter();
   Calculate_facenormal();
@@ -92,7 +89,7 @@ int main()
 //   Iteration=3;
   int k;
   Initial_Condition();
-  
+//   Read_grid_double_output ();
   
   for (k=0;k<=Iteration;k++)
   {
@@ -101,7 +98,8 @@ int main()
    if((k%1000)==0)
    {
       Write_Timestep();
-//       Write_grid_double_output ();
+      
+//       Write_grid_single_output ();
 //    Write_First_row ();
    }
    
@@ -113,26 +111,14 @@ int main()
     Calculate_Q ();
     Calculate_Fluxvectors ();
 //     Calculate_Q_new ();
-    Calculate_Q_new_lax ();
+    Calculate_Q_new_avg ();
     Calculate_Primitive ();
     Calculate_Change ();
 //     Calculate_error ();
 //     Calculate_error_compression ();
     Extra_Iterations ();
   }
-  
-//   int option;
-//   cout<<"Do you want to run for a grid of double the number of grid  points ... ?";
-//   cin>>option;
-//   if (option ==1)
-//   {
-//     
-//     
-//     
-//     
-//   }
-  
- fclose(dataf);
+//   Write_grid_double_output ();
   
 //   Write_Timestep();
   return 0;

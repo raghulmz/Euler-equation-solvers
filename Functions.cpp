@@ -102,6 +102,8 @@ void Calculate_Fluxvectors ()
       }
     }
   }
+  
+  
 }
 
 void Calculate_Timestep () 
@@ -384,7 +386,7 @@ void Calculate_Change ()
   fclose(final);
 }
 
-void Calculate_Q_new_lax () 
+void Calculate_Q_new_avg () 
 {
   int i,j,k,d,c,z;
   double FndS1,FndS2,FndS3,FndS4,FndS5;

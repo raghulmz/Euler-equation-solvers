@@ -306,14 +306,18 @@ void Boundary_Conditions_subsonic_wall ()
     {
       z=d+(x_cell*j);
       
+      *(u_cell+z)=*(u_cell+z+1);
       *(v_cell+z)=0.0;
       *(w_cell+z)=0.0;
       *(t_cell+z)=t0 - ( ((gama-1)/(gama*R)) * 0.5 * (pow(*(u_cell+z),2)+pow(*(v_cell+z),2)+pow(*(w_cell+z),2)) );
-      *(u_cell+z)=mac*sqrt(gama*R**(t_cell+z));
 //       printf("\n t_cell = %f",*(t_cell+z));
       *(p_cell+z)=p0* pow((*(t_cell)/t0),(gama/(gama-1)));
       *(rho_cell+z)=*(p_cell+z)/(R**(t_cell+z));
-     
+     if ( Iter==0 && z==0 )
+      {
+	p_exact=*(p_cell+z);t_exact=*(t_cell+z);rho_exact=*(rho_cell+z);u_exact=*(u_cell+z);v_exact=*(v_cell+z);w_exact=*(w_cell+z);
+	printf("\n\np_exact = %lf,t_exact = %lf,rho_exact = %lf,u_exact = %lf,v_exact = %lf,w_exact = %lf\n",p_exact,t_exact,rho_exact,u_exact,v_exact,w_exact);
+      } 
 //       printf("\n%i , rho = %lf , u = %lf",z,*(rho_cell+z),*(u_cell+z));
       
     }

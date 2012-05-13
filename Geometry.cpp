@@ -293,7 +293,7 @@ void Calculate_cellvolume()
 void Calculate_Nodes_Compression_Expansion_Ramp()
 {
   int i,j,k,d,c,z;
-  L=3.0; B=0.1; H=2.0;
+  L=2.5; B=0.1; H=2.0;
   dx=L/(x_cell-2);	dy=B/(y_cell-2);
 //   theta=-15;
   cout<<"Enter theta ...?";
@@ -331,7 +331,7 @@ void Calculate_Nodes_Compression_Expansion_Ramp()
 void Calculate_Nodes_Convergent_Duct()
 {
   int i,j,k,d,c,z;
-  L=1.8; B=0.1; H=2.0;
+  L=2.5; B=0.1; H=1.2;
   dx=L/(x_cell-2);	dy=B/(y_cell-2);
 //   theta=-15;
   cout<<"Enter theta ...?";
@@ -369,23 +369,31 @@ void Calculate_Nodes_Convergent_Duct()
 
 }
 
-void Calculate_Nodes_Convergent_Divergent_Duct()
+void Calculate_Nodes_Circular_Arc()
 {
   int i,j,k,d,c,z;
-  L=3.5; B=0.1; H=1.2;
-  double theta1,theta2,ramp_end,ramp_start;
+  L=2.0; B=0.1; H=1.0;
+  double ramp_endn,ramp_startn,ramp_end,ramp_start,l,t,radius,theta1,theta2,sz;
   dx=L/(x_cell-2);	dy=B/(y_cell-2);
-//   theta=-15;
-  cout<<"\nEnter convergent angle ...?";
-  cin>>theta1;
-  cout<<"\nEnter divergent angle ...?";
-  cin>>theta2;
-  theta1=(3.14/180.0)*theta1;
-  theta2=(3.14/180.0)*theta2;
-  
+
+  cout<<"\nCircular arc ...\n";
+    
   ramp_start=0.75; ramp_end=1.5;
-  dx=L/(x_cell-2);	dy=B/(y_cell-2);	dz=H/(z_cell-2);
+  t=0.04; l=(ramp_end-ramp_start)/2.0;
+  radius=(t*t)+(l*l);
+  radius-radius/(2.0*t);
+  radius=sqrt(radius);
   
+  theta1=-asin((radius-t)/radius);
+//   printf("theta1 = %lf\n",theta1);
+  theta2=asin((radius-t)/radius);
+//   printf("theta2 = %lf\n",theta2);
+  
+  ramp_endn=radius*cos(theta2)+ramp_start+l;
+  
+  ramp_startn=ramp_start+l-radius*cos(theta2);
+//   printf("RS = %lf\n",ramp_startn);
+//   printf("RE = %lf\n",ramp_endn);
   for(k=1;k<z_cell;k++)
   {
     d=(xy_cell*k);
@@ -398,20 +406,21 @@ void Calculate_Nodes_Convergent_Divergent_Duct()
 // 	printf("%i , %i ,%i \n",d,c,z);
 // 	printf("\n%i , %i , %i",x_cell,y_cell,z_cell);
 	*(node_x+z)=dx*(i-1); *(node_y+z)=dy*(j-1); 
-	if (*(node_x+z)>=ramp_start && *(node_x+z)<=ramp_end)
+	if (*(node_x+z)>ramp_start && *(node_x+z)<ramp_end)
 	{
-	  dz=(H- (2.0*(tan(theta1)*(*(node_x+z)-ramp_start))) )/(z_cell-2);
-// 	  printf("\n (tan(theta)*(*(node_x+z)-1)) = %lf \n",tan(theta)*(*(node_x+z)-0.5));
-	  *(node_z+z)=(dz*(k-1))+(tan(theta1)*(*(node_x+z)-ramp_start));
+// 	 nz++; 
+	}
+	if (*(node_x+z)>ramp_startn && *(node_x+z)<ramp_endn)
+	{
+	  theta=((*(node_x+z)-ramp_start-l)/radius);
+	  theta=acos(theta);
+	  sz=(radius*sin(theta))-radius+t;
+// 	  printf("\nsz = %lf, x= %lf",sz,*(node_x);
+	  dz=(H-sz)/(z_cell-2);
+	  *(node_z+z)=(dz*(k-1));
 // 	  
 	}
-	else if (*(node_x+z)>=ramp_end)
-	{
-	  dz=(H- (2.0*( (tan(3.14-theta2)*(*(node_x+z)-ramp_end)) +(tan(theta1)*(ramp_end-ramp_start) )) ))/(z_cell-2);
-// 	  printf("\n (tan(theta)*(*(node_x+z)-1)) = %lf \n",tan(theta)*(*(node_x+z)-0.5));
-	  *(node_z+z)=(dz*(k-1))+( (tan(3.14-theta2)*(*(node_x+z)-ramp_end)) +(tan(theta1)*(ramp_end-ramp_start)) );
-// 	  
-	}
+	
 	else { dz=H/(z_cell-2); *(node_z+z)=dz*(k-1);}
 	
 // 	printf("%lf , %lf ,%lf \n",*(node_x+z),*(node_y+z),*(node_z+z));
@@ -427,6 +436,7 @@ void Calculate_Nodes_Compression_Ramp_exponential_y()
 {
   int i,j,k,d,c,z;
   double e=2.718281828,P;
+  L=2.5; B=0.1; H=1.5;
   e=e*e;
   dx=L/(x_cell-2);	dy=B/(y_cell-2);
 //   theta=-15;
@@ -464,4 +474,58 @@ void Calculate_Nodes_Compression_Ramp_exponential_y()
       }
     }
   }
+}
+
+void Calculate_Nodes_Convergent_Divergent_Duct()
+{
+  int i,j,k,d,c,z;
+  L=3.0; B=0.1; H=1.2;
+  double theta1,theta2,ramp_end,ramp_start;
+  dx=L/(x_cell-2);	dy=B/(y_cell-2);
+//   theta=-15;
+  cout<<"\nEnter convergent angle ...?";
+  cin>>theta1;
+  cout<<"\nEnter divergent angle ...?";
+  cin>>theta2;
+  theta1=(3.14/180.0)*theta1;
+  theta2=(3.14/180.0)*theta2;
+  
+  ramp_start=0.25; ramp_end=1.0;
+  dx=L/(x_cell-2);	dy=B/(y_cell-2);	dz=H/(z_cell-2);
+  
+  for(k=1;k<z_cell;k++)
+  {
+    d=(xy_cell*k);
+        for(j=1;j<y_cell;j++)
+    {
+      c=d+(x_cell*j);
+      for(i=1;i<x_cell;i++)
+      {
+	z=i+c;
+// 	printf("%i , %i ,%i \n",d,c,z);
+// 	printf("\n%i , %i , %i",x_cell,y_cell,z_cell);
+	*(node_x+z)=dx*(i-1); *(node_y+z)=dy*(j-1); 
+	if (*(node_x+z)>=ramp_start && *(node_x+z)<=ramp_end)
+	{
+	  dz=(H- (2.0*(tan(theta1)*(*(node_x+z)-ramp_start))) )/(z_cell-2);
+// 	  printf("\n (tan(theta)*(*(node_x+z)-1)) = %lf \n",tan(theta)*(*(node_x+z)-0.5));
+	  *(node_z+z)=(dz*(k-1))+(tan(theta1)*(*(node_x+z)-ramp_start));
+// 	  
+	}
+	else if (*(node_x+z)>=ramp_end)
+	{
+	  dz=(H- (2.0*( (tan(3.14-theta2)*(*(node_x+z)-ramp_end)) +(tan(theta1)*(ramp_end-ramp_start) )) ))/(z_cell-2);
+// 	  printf("\n (tan(theta)*(*(node_x+z)-1)) = %lf \n",tan(theta)*(*(node_x+z)-0.5));
+	  *(node_z+z)=(dz*(k-1))+( (tan(3.14-theta2)*(*(node_x+z)-ramp_end)) +(tan(theta1)*(ramp_end-ramp_start)) );
+// 	  
+	}
+	else { dz=H/(z_cell-2); *(node_z+z)=dz*(k-1);}
+	
+// 	printf("%lf , %lf ,%lf \n",*(node_x+z),*(node_y+z),*(node_z+z));
+// 	printf("\n%i , %i, %i, %i, %i\n\n",z,z,z+1,z+1+x_cell,z+x_cell);
+      }
+    }
+  }
+  
+
 }

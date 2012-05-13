@@ -85,7 +85,7 @@ void Write_Timestep()
     }
   }
   
-   fprintf(final,"\n\nSCALARS Mach double\nLOOKUP_TABLE default\n",number_cell);
+  fprintf(final,"\n\nSCALARS Mach double\nLOOKUP_TABLE default\n",number_cell);
   for(k=1;k<z_cell-1;k++)
   {
     d=(xy_cell*k);
@@ -328,33 +328,51 @@ void Write_First_row ()
 void Read_grid_double_output ()
 {
   int i,j,k,d,c,z;
-  FILE *ipf = fopen("./Data/grid_double.dat", "r");;
-  if (ipf == NULL) 
-  {
-    printf( "Can't open input file input!\n");
-    
-  }
   
-  for(k=1;k<z_cell-1;k++)
+
+  ifstream inFile;
+  char inputFilename[] = "./Data/grid_double.dat";
+  inFile.open(inputFilename);
+//   fflush();
+  if (!inFile) {
+    cerr << "Can't open input file " << inputFilename << endl;
+    exit(1);
+  }
+  inFile>>Iter;
+  printf("\n%i\n",Iter);
+  
+  while (!inFile.eof())
   {
-    d=(xy_cell*k);
-    for(j=1;j<y_cell-1;j++)
+    for(k=1;k<z_cell-1;k++)
     {
-      c=d+(x_cell*j);
-      for(i=1;i<x_cell-1;i++)
+      d=(xy_cell*k);
+      for(j=1;j<y_cell-1;j++)
       {
-	z=i+c;
-// 	cin(ipf)>>*(p_cell+z)>>*(t_cell+z)>>*(rho_cell+z)>>*(u_cell+z)>>*(v_cell+z)>>*(w_cell+z);
-	printf("\n%5.15lf %5.15lf %5.15lf %5.15lf %5.15lf %5.15lf",*(p_cell+z),*(t_cell+z),*(rho_cell+z),*(u_cell+z),*(v_cell+z),*(w_cell+z));
+	c=d+(x_cell*j);
+	for(i=1;i<x_cell-1;i++)
+	{
+	  z=i+c;
+	  inFile>>*(p_cell+z)>>*(t_cell+z)>>*(rho_cell+z)>>*(u_cell+z)>>*(v_cell+z)>>*(w_cell+z);
+// 	  printf("\ni = %i, %5.15lf %5.15lf %5.15lf %5.15lf %5.15lf %5.15lf",z,*(p_cell+z),*(t_cell+z),*(rho_cell+z),*(u_cell+z),*(v_cell+z),*(w_cell+z));
+	}
       }
     }
   }
-  fclose(ipf);
+  inFile.close();
+}
+
+void Read_grid_size_single()
+{
+ FILE *grid = fopen( "./Data/grid_size.dat","r" );
+ fscanf(grid,"%i %i %i",&x_cell,&y_cell,&z_cell);
+ printf("%i %i %i\n",x_cell,y_cell,z_cell);
+ fclose(grid); 
+  
 }
 
 void Read_grid_size()
 {
- FILE *grid = fopen( "./Data/grid_size.dat","w" );
+ FILE *grid = fopen( "./Data/grid_size.dat","r" );
  fscanf(grid,"%i %i %i",&x_cell,&y_cell,&z_cell);
  x_cell=x_cell*2; y_cell=y_cell*2; z_cell=z_cell*2;
  printf("%i %i %i\n",x_cell,y_cell,z_cell);
@@ -365,6 +383,7 @@ void Write_grid_double_output ()
 {
   int i,j,k,d,c,z,l,m,n;
   FILE *final = fopen( "./Data/grid_double.dat","w" );
+  fprintf(final,"%d\n",Iter);
   fclose(final);
   FILE *grid = fopen( "./Data/grid_size.dat","w" );
   fprintf(grid,"%i %i %i",x_cell-2,y_cell-2,z_cell-2);
@@ -378,12 +397,12 @@ void Write_grid_double_output ()
       for(j=1;j<y_cell-1;j++)
       {
 	c=d+(x_cell*j);
-	for(l=1;l<=2;l++)
+	for(m=1;m<=2;m++)
 	{
 	  for(i=1;i<x_cell-1;i++)
 	  {
 	    z=i+c;
-	    for(l=1;l<=2;l++)
+	    for(n=1;n<=2;n++)
 	    {
 	      FILE *final = fopen( "./Data/grid_double.dat","a" );
 	      fprintf(final,"%5.15lf %5.15lf %5.15lf %5.15lf %5.15lf %5.15lf\n",*(p_cell+z),*(t_cell+z),*(rho_cell+z),*(u_cell+z),*(v_cell+z),*(w_cell+z));
@@ -395,4 +414,39 @@ void Write_grid_double_output ()
     }
   }
   
+}
+
+void Write_grid_single_output ()
+{
+  int i,j,k,d,c,z,l,m,n;
+  FILE *final = fopen( "./Data/grid_double.dat","w" );
+  fprintf(final,"%d\n",Iter);
+  
+  FILE *grid = fopen( "./Data/grid_size.dat","w" );
+  fprintf(grid,"%i %i %i",x_cell-2,y_cell-2,z_cell-2);
+  fclose(grid);
+  
+  for(k=1;k<z_cell-1;k++)
+  {
+    d=(xy_cell*k);
+//     for(l=1;l<=2;l++)
+//     {
+      for(j=1;j<y_cell-1;j++)
+      {
+	c=d+(x_cell*j);
+// 	for(m=1;m<=2;m++)
+// 	{
+	  for(i=1;i<x_cell-1;i++)
+	  {
+	    z=i+c;
+// 	    for(n=1;n<=2;n++)
+// 	    {
+	      fprintf(final,"%5.15lf %5.15lf %5.15lf %5.15lf %5.15lf %5.15lf\n",*(p_cell+z),*(t_cell+z),*(rho_cell+z),*(u_cell+z),*(v_cell+z),*(w_cell+z));
+// 	    }
+	  }
+// 	}
+      }
+//     }
+  }
+fclose(final);  
 }
