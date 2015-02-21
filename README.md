@@ -2,4 +2,4 @@
 Euler equation solvers
 
 Execute Project.sh
-./Project.sh
+./Project.sh
